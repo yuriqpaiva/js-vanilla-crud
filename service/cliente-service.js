@@ -38,4 +38,31 @@ const removeCliente = (id) => {
   });
 };
 
-export const clienteService = { listaClientes, criaCliente, removeCliente };
+const detalhaCliente = (id) => {
+  return fetch(`http://localhost:3000/profile/${id}`).then((res) => {
+    return res.json();
+  });
+};
+
+const atualizaCliente = (id, nome, email) => {
+  return fetch(`http://localhost:3000/profile/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      nome,
+      email,
+    }),
+  }).then((res) => {
+    return res.json();
+  });
+};
+
+export const clienteService = {
+  listaClientes,
+  criaCliente,
+  removeCliente,
+  detalhaCliente,
+  atualizaCliente,
+};
