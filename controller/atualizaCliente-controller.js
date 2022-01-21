@@ -1,26 +1,38 @@
 import { clienteService } from '../service/cliente-service.js';
 
-const pegaURL = new URL(window.location);
+(async () => {
+  const pegaURL = new URL(window.location);
 
-//  Pegando id dos query params
-const id = pegaURL.searchParams.get('id');
-console.log(id);
+  //  Pegando id dos query params
+  const id = pegaURL.searchParams.get('id');
+  console.log(id);
 
-const inputNome = document.querySelector('[data-nome]');
-const inputEmail = document.querySelector('[data-email]');
+  const inputNome = document.querySelector('[data-nome]');
+  const inputEmail = document.querySelector('[data-email]');
 
-clienteService.detalhaCliente(id).then((dados) => {
-  inputNome.value = dados.nome;
-  inputEmail.value = dados.email;
-});
+  try {
+    const dados = await clienteService.detalhaCliente(id);
+    inputNome.value = dados.nome;
+    inputEmail.value = dados.email;
+  } catch (e) {
+    console.log(e);
+    window.location.href = '../telas/erro.html';
+  }
 
-const formulario = document.querySelector('[data-form]');
+  const formulario = document.querySelector('[data-form]');
 
-formulario.addEventListener('submit', (e) => {
-  e.preventDefault();
-  clienteService
-    .atualizaCliente(id, inputNome.value, inputEmail.value)
-    .then(() => {
+  formulario.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await clienteService.atualizaCliente(
+        id,
+        inputNome.value,
+        inputEmail.value
+      );
       window.location.href = '../telas/edicao_concluida.html';
-    });
-});
+    } catch (e) {
+      console.log(e);
+      window.location.href = '../telas/erro.html';
+    }
+  });
+})();

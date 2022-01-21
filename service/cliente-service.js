@@ -15,7 +15,10 @@ const listaClientes = () => {
   //   return promise;
 
   return fetch('http://localhost:3000/profile').then((res) => {
-    return res.json();
+    if (res.ok) {
+      return res.json();
+    }
+    throw new Error('Não foi possível listar os clientes');
   });
 };
 
@@ -29,18 +32,32 @@ const criaCliente = (nome, email) => {
       nome: nome,
       email: email,
     }),
-  }).then((res) => res.body);
+  }).then((res) => {
+    if (res.ok) {
+      return res.body;
+    } else {
+      throw new Error('Não foi possível criar um cliente');
+    }
+  });
 };
 
 const removeCliente = (id) => {
   return fetch(`http://localhost:3000/profile/${id}`, {
     method: 'DELETE',
+  }).then((res) => {
+    if (!res.ok) {
+      throw new Error('Não foi possível remover um cliente');
+    }
   });
 };
 
 const detalhaCliente = (id) => {
   return fetch(`http://localhost:3000/profile/${id}`).then((res) => {
-    return res.json();
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error('Não foi possível detalhar o cliente');
+    }
   });
 };
 
@@ -55,7 +72,11 @@ const atualizaCliente = (id, nome, email) => {
       email,
     }),
   }).then((res) => {
-    return res.json();
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error('Não foi possível atualizar um cliente');
+    }
   });
 };
 

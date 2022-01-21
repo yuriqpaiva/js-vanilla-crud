@@ -17,21 +17,33 @@ const criaNovalinha = (nome, email, id) => {
 
 const tabela = document.querySelector('[data-tabela]');
 
-tabela.addEventListener('click', (e) => {
+tabela.addEventListener('click', async (e) => {
   let ehBotaoDeletar =
     e.target.className === 'botao-simples botao-simples--excluir';
 
   if (ehBotaoDeletar) {
-    const linhaCliente = e.target.closest('[data-id]');
-    let id = linhaCliente.dataset.id;
-    clienteService.removeCliente(id).then(() => {
+    try {
+      const linhaCliente = e.target.closest('[data-id]');
+      let id = linhaCliente.dataset.id;
+      await clienteService.removeCliente(id); // esperando resolução da promise
       linhaCliente.remove();
-    });
+    } catch (e) {
+      console.log(e);
+      window.location.href = '../telas/erro.html';
+    }
   }
 });
 
-clienteService.listaClientes().then((data) => {
-  data.forEach(({ nome, email, id }) => {
-    tabela.appendChild(criaNovalinha(nome, email, id));
-  });
-});
+const render = async () => {
+  try {
+    const listaClientes = await clienteService.listaClientes();
+    listaClientes.forEach(({ nome, email, id }) => {
+      tabela.appendChild(criaNovalinha(nome, email, id));
+    });
+  } catch (e) {
+    console.log(e);
+    window.location.href = '../telas/erro.html';
+  }
+};
+
+render();
